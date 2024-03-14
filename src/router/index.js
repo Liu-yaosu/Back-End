@@ -1,7 +1,7 @@
 const { Router } = require("express");
-const userRouter = require("../router/user.router");
-const regisRouter = require("../router/register.router");
-const loginRouter = require("../router/login.router");
+const userRouter = require("./user.router");
+const regisRouter = require("./register.router");
+const loginRouter = require("./login.router");
 const router = Router();
 router.get("/", (req, res) => {
   res.json("Hello Anjing");
