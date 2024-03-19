@@ -1,12 +1,13 @@
 const { PrismaClient } = require("@prisma/client");
-const schema = require("../validator/validator.js");
-const bcrypt = require("bcrypt");
+const schema = require("../validator/filmValidator");
+// const bcrypt = require("bcrypt");
+const bodyparser = require("body-parser");
 const prisma = new PrismaClient();
 
-class userController {
-  static async getAllUsers(req, res) {
+class filmController {
+  static async getAllFilms(req, res) {
     try {
-      const result = await prisma.User.findMany({});
+      const result = await prisma.movie.findMany({});
       if (result.length === 0) {
         res.status(200).json({ message: "Tidak ada data saat ini" });
       } else {
@@ -17,19 +18,17 @@ class userController {
     }
   }
 
-  static async createUser(req, res) {
+  static async createFilms(req, res) {
     try {
       if (!req || !req.body) {
         throw new Error("Request body is undefined or missing");
       }
 
       const checklistjoi = await schema.validateAsync(req.body);
-      const salt = await bcrypt.genSalt(10);
-      const result = await prisma.User.create({
+      const result = await prisma.movie.create({
         data: {
-          name: checklistjoi.name,
-          email: checklistjoi.email,
-          password: bcrypt.hashSync(checklistjoi.password, salt),
+          movie_name: checklistjoi.movie_name,
+          category: checklistjoi.category,
         },
       });
       res.status(201).json(result);
@@ -38,18 +37,18 @@ class userController {
     }
   }
 
-  static async getUserById(req, res) {
+  static async getFilmsById(req, res) {
     try {
-      const userId = Number(req.params.id);
-      if (isNaN(userId)) {
+      const filmId = Number(req.params.id);
+      if (isNaN(filmId)) {
         // Jika req.params.id tidak dapat diubah menjadi tipe data integer, kirimkan respons dengan pesan kesalahan
         res.status(400).json({ error: "ID pengguna tidak valid" });
         return;
       }
 
-      const result = await prisma.User.findUnique({
+      const result = await prisma.movie.findUnique({
         where: {
-          id: userId,
+          kd: filmId,
         },
       });
 
@@ -67,18 +66,16 @@ class userController {
     }
   }
 
-  static async updateUser(req, res) {
+  static async updateFilm(req, res) {
     try {
       const checklistjoi = await schema.validateAsync(req.body);
-      const salt = await bcrypt.genSalt(10);
-      const result = await prisma.User.update({
+      const result = await prisma.movie.update({
         where: {
-          id: parseInt(req.params.id),
+          kd: parseInt(req.params.id),
         },
         data: {
-          name: checklistjoi.name,
-          email: checklistjoi.email,
-          password: bcrypt.hashSync(checklistjoi.password, salt),
+          movie_name: checklistjoi.movie_name,
+          category: checklistjoi.category,
         },
       });
       res.status(200).json(result);
@@ -87,11 +84,11 @@ class userController {
     }
   }
 
-  static async deleteUser(req, res) {
+  static async deleteFilm(req, res) {
     try {
-      const result = await prisma.User.delete({
+      const result = await prisma.movie.delete({
         where: {
-          id: Number(req.params.id),
+          kd: Number(req.params.id),
         },
       });
       res.status(200).json(result);
@@ -101,4 +98,4 @@ class userController {
   }
 }
 
-module.exports = userController;
+module.exports = filmController;

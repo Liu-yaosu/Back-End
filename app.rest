@@ -1,2 +1,27 @@
-http://localhost:3000/users
+http://localhost:3000/
 
+###
+GET  http://localhost:3000/films
+
+###
+GET  http://localhost:3000/films/01
+
+###
+POST http://localhost:3000/films
+Content-Type: application/json
+
+{
+    "movie_name": "Beauty Sister's GirlFriend ",
+    "category": "Romance"
+}
+
+###
+PUT  http://localhost:3000/films/2
+Content-Type: application/json
+
+{
+    "movie_name": "Sister In Law",
+    "category": "Romance"
+}
+###
+DELETE  http://localhost:3000/films/01

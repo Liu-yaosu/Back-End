@@ -22,10 +22,10 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Movie {
-  id_vd     Int      @id @default(autoincrement())
-  judul     String
-  category  String
-  createdAt DateTime @default(now())
-  deletedAt DateTime @updatedAt
+model movie {
+  kd         Int      @id @default(autoincrement())
+  movie_name String
+  category   String
+  createdAt  DateTime @default(now())
+  deletedAt  DateTime @updatedAt
 }

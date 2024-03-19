@@ -1,6 +1,6 @@
 const joi = require("joi");
 const schema = joi.object({
-  judul: joi.string(),
+  movie_name: joi.string(),
   category: joi.string(),
 });
 
