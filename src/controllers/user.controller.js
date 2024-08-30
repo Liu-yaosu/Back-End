@@ -10,10 +10,18 @@ class userController {
       if (result.length === 0) {
         res.status(200).json({ message: "Tidak ada data saat ini" });
       } else {
-        res.status(200).json(result);
+        res.status(200).json({
+          success: true,
+          message: "Data berhasil ditampilkan",
+          data: result,
+        });
       }
     } catch (error) {
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: false,
+        message: "Data gagal ditampilkan",
+        error: error.message,
+      });
     }
   }
 
@@ -22,19 +30,27 @@ class userController {
       if (!req || !req.body) {
         throw new Error("Request body is undefined or missing");
       }
-
       const checklistjoi = await schema.validateAsync(req.body);
       const salt = await bcrypt.genSalt(10);
       const result = await prisma.User.create({
         data: {
-          name: checklistjoi.name,
+          username: checklistjoi.username,
           email: checklistjoi.email,
           password: bcrypt.hashSync(checklistjoi.password, salt),
+          role: "user",
         },
       });
-      res.status(201).json(result);
+      res.status(201).json({
+        success: true,
+        message: "Data berhasil ditambah",
+        data: null,
+      });
     } catch (error) {
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: false,
+        message: "Gagal Menambah Data",
+        error: error.message,
+      });
     }
   }
 
@@ -46,24 +62,41 @@ class userController {
         res.status(400).json({ error: "ID pengguna tidak valid" });
         return;
       }
-
       const result = await prisma.User.findUnique({
         where: {
           id: userId,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: true,
+          role: true,
         },
       });
 
       if (!result) {
         // Jika pengguna dengan ID yang diberikan tidak ditemukan, kirimkan respons dengan status 404
-        res.status(404).json({ error: "User tidak ditemukan" });
+        res.status(404).json({
+          success: false,
+          message: "User tidak ditemukan",
+          error: schema.error.message,
+        });
         return;
       }
-
       // Jika pengguna ditemukan, kirimkan respons dengan data pengguna
-      res.status(200).json(result);
+      res.status(200).json({
+        success: true,
+        message: "Data berhasil ditampilkan",
+        data: result,
+      });
     } catch (error) {
       // Tangkap kesalahan yang mungkin terjadi dan kirimkan respons dengan pesan kesalahan yang sesuai
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: false,
+        message: "Gagal menampilkan data",
+        error: error.message,
+      });
     }
   }
 
@@ -76,14 +109,23 @@ class userController {
           id: parseInt(req.params.id),
         },
         data: {
-          name: checklistjoi.name,
+          username: checklistjoi.username,
           email: checklistjoi.email,
           password: bcrypt.hashSync(checklistjoi.password, salt),
+          role: "user",
         },
       });
-      res.status(200).json(result);
+      res.status(200).json({
+        success: true,
+        message: "Data berhasil diubah",
+        data: null,
+      });
     } catch (error) {
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: false,
+        message: "Gagal mengubah data",
+        error: error.message,
+      });
     }
   }
 
@@ -94,9 +136,17 @@ class userController {
           id: Number(req.params.id),
         },
       });
-      res.status(200).json(result);
+      res.status(200).json({
+        success: true,
+        message: "Data telah terhapus",
+        data: null,
+      });
     } catch (error) {
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: true,
+        message: "Data gagal dihapus",
+        error: error.message,
+      });
     }
   }
 }

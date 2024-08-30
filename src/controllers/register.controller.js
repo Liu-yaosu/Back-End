@@ -1,24 +1,36 @@
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
+const schema = require("../validator/validator.js");
 const prisma = new PrismaClient();
 
 class regisController {
   static async register(req, response) {
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashing password
+      if (!req || !req.body) {
+        throw new Error("Request body is undefined or missing");
+      }
+      const checklistjoi = await schema.validateAsync(req.body);
+      const salt = await bcrypt.genSalt(10);
       const newUser = await prisma.User.create({
         data: {
-          name: req.body.name,
-          email: req.body.email,
-          password: hashedPassword,
+          username: checklistjoi.username,
+          email: checklistjoi.email,
+          password: bcrypt.hashSync(checklistjoi.password, salt),
+          role: "user",
           // Tambahkan properti lainnya sesuai kebutuhan
         },
       });
-      return response
-        .status(201)
-        .json({ message: "Registrasi Berhasil", user: newUser });
+      return response.status(201).json({
+        success: true,
+        message: "Registrasi Berhasil",
+        data: null,
+      });
     } catch (error) {
-      response.status(500).json({ error: error.message });
+      response.status(500).json({
+        success: false,
+        message: "Gagal melakukan Registrasi",
+        error: error.message,
+      });
     }
   }
 

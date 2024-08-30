@@ -13,19 +13,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  admin
+  user
+}
+
 model User {
   id        Int      @id @default(autoincrement())
-  name      String
-  email     String
+  username  String   @unique
+  email     String   @unique
   password  String
+  role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model movie {
-  kd         Int      @id @default(autoincrement())
-  movie_name String
-  category   String
-  createdAt  DateTime @default(now())
-  deletedAt  DateTime @updatedAt
+model Film {
+  movie_id    Int      @id @default(autoincrement())
+  movie_title String
+  description String?
+  createdAt   DateTime @default(now())
+  deletedAt   DateTime @default(now())
+  movie_url   String
+  uploadAt    DateTime @default(now())
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+}
+
+model Category {
+  id       Int      @id @default(autoincrement())
+  createAt DateTime @default(now())
+  updateAT DateTime @updatedAt
+  name     String   @unique
+  films    Film[]
 }

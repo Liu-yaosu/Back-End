@@ -1,7 +1,8 @@
 const { Router } = require("express");
-const jwt = require("jsonwebtoken");
-const userController = require("../controllers/user.controller");
+const movieController = require("../controllers/movieController");
 const router = Router();
+const jwt = require("jsonwebtoken");
+
 const accessValidation = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
@@ -21,10 +22,9 @@ const accessValidation = (req, res, next) => {
   }
   next();
 };
-router.get("/users", accessValidation, userController.getAllUsers);
-router.get("/users/:id", accessValidation, userController.getUserById);
-router.post("/users", userController.createUser);
-router.put("/users/:id", userController.updateUser);
-router.delete("/users/:id", userController.deleteUser);
-
+router.get("/movie", accessValidation, movieController.getAllMovie);
+router.get("/movie/:id", accessValidation, movieController.getMovieById);
+router.post("/movie", accessValidation, movieController.createMovie);
+router.put("/movie/:id", movieController.updateMovie);
+router.delete("/movie/:id", movieController.deleteMovie);
 module.exports = router;

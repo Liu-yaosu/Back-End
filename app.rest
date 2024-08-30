@@ -7,12 +7,13 @@ GET  http://localhost:3000/films
 GET  http://localhost:3000/films/01
 
 ###
-POST http://localhost:3000/films
+POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "movie_name": "Beauty Sister's GirlFriend ",
-    "category": "Romance"
+    "name": "dimas",
+    "email": "dimas@gmaiil.com",
+    "password": "kiwhdak"
 }
 
 ###

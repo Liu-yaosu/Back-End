@@ -31,38 +31,37 @@ class filmController {
           category: checklistjoi.category,
         },
       });
-      res.status(201).json(result);
+      res.status(201).json({
+        success: true,
+        message: "Berhasil Menambahkan data",
+        data: null,
+      });
     } catch (error) {
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      res.status(500).json({
+        success: false,
+        message: "Gagal menambahkan data",
+        error: error.message,
+      });
     }
   }
 
   static async getFilmsById(req, res) {
+    // menggunakan try catch untuk menangkap error
     try {
-      const filmId = Number(req.params.id);
-      if (isNaN(filmId)) {
-        // Jika req.params.id tidak dapat diubah menjadi tipe data integer, kirimkan respons dengan pesan kesalahan
-        res.status(400).json({ error: "ID pengguna tidak valid" });
-        return;
-      }
-
       const result = await prisma.movie.findUnique({
         where: {
-          kd: filmId,
+          id: parseInt(req.params.id),
         },
       });
-
-      if (!result) {
-        // Jika pengguna dengan ID yang diberikan tidak ditemukan, kirimkan respons dengan status 404
-        res.status(404).json({ error: "User tidak ditemukan" });
-        return;
-      }
-
-      // Jika pengguna ditemukan, kirimkan respons dengan data pengguna
-      res.status(200).json(result);
+      // mengirim data ke user dengan 200 dan hasil dari result yang sudah diambil dari database
+      res.status(200).json({
+        success: true,
+        message: "Berhasil menampilkan data",
+        data: result,
+      });
     } catch (error) {
-      // Tangkap kesalahan yang mungkin terjadi dan kirimkan respons dengan pesan kesalahan yang sesuai
-      res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+      // mengirim data ke user dengan 400 dan menampilkan pesan error
+      res.status(400).json({ error: error.message });
     }
   }
 
@@ -71,7 +70,7 @@ class filmController {
       const checklistjoi = await schema.validateAsync(req.body);
       const result = await prisma.movie.update({
         where: {
-          kd: parseInt(req.params.id),
+          id: parseInt(req.params.id),
         },
         data: {
           movie_name: checklistjoi.movie_name,
@@ -88,7 +87,7 @@ class filmController {
     try {
       const result = await prisma.movie.delete({
         where: {
-          kd: Number(req.params.id),
+          id: Number(req.params.id),
         },
       });
       res.status(200).json(result);
