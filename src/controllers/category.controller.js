@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const schema = require("../validator/categoryValidator");
+const { object } = require("joi");
 const prisma = new PrismaClient();
 
 class CategoryController {
@@ -82,13 +83,21 @@ class CategoryController {
 
   static async updateCategory(req, res) {
     try {
-      const categoryId = parseInt(req.params.id);
-      const { category_name } = req.body;
+      const categoryId = Number(req.params.id);
+      const { name } = req.body;
+      if (!name) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid fields to update",
+        });
+      }
       const updatedCategory = await prisma.category.update({
         where: {
           id: categoryId,
         },
-        data: { category_name },
+        data: {
+          name: name,
+        },
       });
       res.status(200).json({
         success: true,
@@ -105,18 +114,31 @@ class CategoryController {
   }
 
   static async deleteCategory(req, res) {
+    const { id } = req.params;
     try {
+      const isAlready = await prisma.category.findFirst({
+        where: {
+          id: Number(id),
+        },
+      });
+      if (!isAlready) {
+        return res.status(404).json({
+          success: false,
+          message: "data tidak ada",
+          data: null,
+        });
+      }
       const categoryId = parseInt(req.params.id);
       await prisma.category.delete({ where: { id: categoryId } });
       res.status(200).json({
         success: true,
-        message: "Category deleted successfully",
+        message: "Kategori Berhasil di Hapus",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal Menghapus Data",
+        message: "Gagal Menghapus Kategori",
         error: error.message,
       });
     }

@@ -46,10 +46,11 @@ class movieController {
           categoryId: true,
         },
       });
-      res.redirect("/users");
-      // success: true,
-      // message: "berhasil menampilkan data",
-      // data: result,
+      res.status(200).json({
+        success: true,
+        message: "berhasil menampilkan data",
+        data: result,
+      });
     } catch (error) {
       res.status(400).json({
         success: false,

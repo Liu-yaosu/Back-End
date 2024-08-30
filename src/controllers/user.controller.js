@@ -6,7 +6,14 @@ const prisma = new PrismaClient();
 class userController {
   static async getAllUsers(req, res) {
     try {
-      const result = await prisma.User.findMany({});
+      const result = await prisma.User.findMany({
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          role: true,
+        },
+      });
       if (result.length === 0) {
         res.status(200).json({ message: "Tidak ada data saat ini" });
       } else {
@@ -130,7 +137,20 @@ class userController {
   }
 
   static async deleteUser(req, res) {
+    const { id } = req.params;
     try {
+      const isAlready = await prisma.User.findFirst({
+        where: {
+          id: Number(id),
+        },
+      });
+      if (!isAlready) {
+        return res.status(404).json({
+          success: false,
+          message: "Data tidak ada",
+          data: null,
+        });
+      }
       const result = await prisma.User.delete({
         where: {
           id: Number(req.params.id),

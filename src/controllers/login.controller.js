@@ -46,7 +46,7 @@ class loginController {
       } else {
         return response.status(200).json({
           success: true,
-          message: "Welcome To Mobile Legend",
+          message: "Selamat Datang User",
           data: null,
           token,
         });
