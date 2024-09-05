@@ -47,3 +47,9 @@ model Category {
   name     String   @unique
   films    Film[]
 }
+
+model blackListToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
