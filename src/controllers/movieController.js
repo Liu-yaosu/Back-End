@@ -16,17 +16,17 @@ class movieController {
       });
 
       if (!result) {
-        res.status(400).json({ error: "tidak ada data saat ini" });
+        res.status(404).json({ error: "Data Not Found" });
       }
       res.status(200).json({
         success: true,
-        message: "Data Berhasil di Tampilkan",
+        message: "Display Successfully",
         data: result,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal Menampilkan Data",
+        message: "Display Failed",
         error: error.message,
       });
     }
@@ -48,13 +48,13 @@ class movieController {
       });
       res.status(200).json({
         success: true,
-        message: "berhasil menampilkan data",
+        message: "Display Successfully",
         data: result,
       });
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: "Gagal menampilkan data",
+        message: "Display Failed",
         error: error.message,
       });
     }
@@ -81,13 +81,13 @@ class movieController {
       });
       res.status(200).json({
         success: true,
-        message: "Berhasil Menambahkan Data",
+        message: "Added Successfully",
         Data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal Menambahkan Data",
+        message: "Added Failed",
         error: error.message,
       });
     }
@@ -111,13 +111,13 @@ class movieController {
       });
       res.status(200).json({
         success: true,
-        message: "Berhasil Memperbarui Data",
+        message: "Updated Successfully",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal memperbarui Data",
+        message: "Updated Failed",
         error: error.message,
       }); ///pada bagian error message masih menampilkan success message
     }
@@ -135,7 +135,7 @@ class movieController {
       if (!isAlready) {
         return res.status(404).json({
           success: false,
-          message: "Data tidak ada",
+          message: "Data Not Found",
           data: null,
         });
       }
@@ -148,13 +148,13 @@ class movieController {
 
       return res.status(200).json({
         success: true,
-        message: "Data Telah dihapus",
+        message: "Deleted Successfully",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal Menghapus Data",
+        message: "Deleted Failed",
         error: error.message,
       });
     }

@@ -15,18 +15,18 @@ class userController {
         },
       });
       if (result.length === 0) {
-        res.status(200).json({ message: "Tidak ada data saat ini" });
+        res.status(200).json({ message: "Data Not Found" });
       } else {
         res.status(200).json({
           success: true,
-          message: "Data berhasil ditampilkan",
+          message: "Display Successfully",
           data: result,
         });
       }
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Data gagal ditampilkan",
+        message: "Display Failed",
         error: error.message,
       });
     }
@@ -49,13 +49,13 @@ class userController {
       });
       res.status(201).json({
         success: true,
-        message: "Data berhasil ditambah",
+        message: "Added Successfully",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal Menambah Data",
+        message: "Added Failed",
         error: error.message,
       });
     }
@@ -66,7 +66,7 @@ class userController {
       const userId = Number(req.params.id);
       if (isNaN(userId)) {
         // Jika req.params.id tidak dapat diubah menjadi tipe data integer, kirimkan respons dengan pesan kesalahan
-        res.status(400).json({ error: "ID pengguna tidak valid" });
+        res.status(400).json({ error: "ID User Not Valid" });
         return;
       }
       const result = await prisma.User.findUnique({
@@ -86,7 +86,7 @@ class userController {
         // Jika pengguna dengan ID yang diberikan tidak ditemukan, kirimkan respons dengan status 404
         res.status(404).json({
           success: false,
-          message: "User tidak ditemukan",
+          message: "User Not Found",
           error: schema.error.message,
         });
         return;
@@ -94,14 +94,14 @@ class userController {
       // Jika pengguna ditemukan, kirimkan respons dengan data pengguna
       res.status(200).json({
         success: true,
-        message: "Data berhasil ditampilkan",
+        message: "Display Successfully",
         data: result,
       });
     } catch (error) {
       // Tangkap kesalahan yang mungkin terjadi dan kirimkan respons dengan pesan kesalahan yang sesuai
       res.status(500).json({
         success: false,
-        message: "Gagal menampilkan data",
+        message: "Display Failed",
         error: error.message,
       });
     }
@@ -124,13 +124,13 @@ class userController {
       });
       res.status(200).json({
         success: true,
-        message: "Data berhasil diubah",
+        message: "Updated Successfully",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Gagal mengubah data",
+        message: "Updated Failed",
         error: error.message,
       });
     }
@@ -147,7 +147,7 @@ class userController {
       if (!isAlready) {
         return res.status(404).json({
           success: false,
-          message: "Data tidak ada",
+          message: "Data Not Found",
           data: null,
         });
       }
@@ -158,13 +158,13 @@ class userController {
       });
       res.status(200).json({
         success: true,
-        message: "Data telah terhapus",
+        message: "Deleted Successfully",
         data: null,
       });
     } catch (error) {
       res.status(500).json({
         success: true,
-        message: "Data gagal dihapus",
+        message: "Deleted Failed",
         error: error.message,
       });
     }

@@ -20,19 +20,20 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int                 @id @default(autoincrement())
+  username     String              @unique
+  email        String              @unique
+  password     String
+  role         Role
+  Subscription subscription_user[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 }
 
 model Film {
   movie_id    Int      @id @default(autoincrement())
   movie_title String
-  description String?
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   deletedAt   DateTime @default(now())
   movie_url   String
@@ -53,4 +54,22 @@ model blackListToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   createdAt DateTime @default(now())
+}
+
+model subscription {
+  id           Int                 @id @default(autoincrement())
+  name         String              @unique
+  createdAt    DateTime            @default(now())
+  UpdatedAt    DateTime            @updatedAt
+  Subscription subscription_user[]
+}
+
+model subscription_user {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  subscription   subscription @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int
+  User           User         @relation(fields: [userId], references: [id])
+  userId         Int
 }

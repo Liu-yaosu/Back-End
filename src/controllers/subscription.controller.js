@@ -1,12 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
-const schema = require("../validator/categoryValidator");
-const { object } = require("joi");
 const prisma = new PrismaClient();
 
-class CategoryController {
-  static async getAllCategories(req, res) {
+class subscriptionController {
+  static async getAllSubscription(req, res) {
     try {
-      const categories = await prisma.category.findMany({
+      const result = await prisma.subscription.findMany({
         select: {
           id: true,
           name: true,
@@ -14,89 +12,87 @@ class CategoryController {
       });
       res.status(200).json({
         success: true,
-        message: "Display Successfully",
-        data: categories,
+        message: "Displays Successfully",
+        data: result,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Display Failed",
         error: error.message,
       });
     }
   }
-  static async getCategoryById(req, res) {
+  static async getAllSubscriptionById(req, res) {
     try {
-      const categoryId = parseInt(req.params.id);
-      const category = await prisma.category.findUnique({
+      const result = await prisma.subscription.findUnique({
         where: {
-          id: categoryId,
+          id: parseInt(req.params.id),
         },
         select: {
           id: true,
           name: true,
         },
       });
-      if (!category) {
+      if (!result) {
         return res.status(404).json({
           success: false,
-          message: "Category Not Found",
-          error: error.message,
+          message: "Data Not Found",
         });
       }
       res.status(200).json({
         success: true,
         message: "Display Successfully",
-        data: category,
+        data: result,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: "Failed to Display",
+        message: "Display Failed",
         error: error.message,
       });
     }
   }
-
-  static async createCategory(req, res) {
+  static async createSubsription(req, res) {
     try {
-      const checklistjoi = await schema.validateAsync(req.body);
-      const { ...category } = checklistjoi;
-      const newCategory = await prisma.category.create({
-        data: {
-          ...category,
+      const isAlready = await prisma.subscription.findFirst({
+        where: {
+          name: req.body.name,
         },
       });
-      res.status(201).json({
+      if (isAlready) {
+        return res.status(400).json({
+          success: false,
+          message: "Subscription Name Is Already",
+        });
+      }
+      const result = await prisma.subscription.create({
+        data: {
+          name: req.body.name,
+        },
+      });
+      res.status(200).json({
         success: true,
-        message: "Added Successfully",
+        message: "Created Data Successfully",
         data: null,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: "Added Failed",
+        message: "Created Data Failed",
         error: error.message,
       });
     }
   }
-
-  static async updateCategory(req, res) {
+  static async updatedSubscription(req, res) {
     try {
-      const categoryId = Number(req.params.id);
-      const { name } = req.body;
-      if (!name) {
-        return res.status(400).json({
-          success: false,
-          message: "No valid fields to update",
-        });
-      }
-      const updatedCategory = await prisma.category.update({
+      const subsId = parseInt(req.params.id);
+      const result = await prisma.subscription.update({
         where: {
-          id: categoryId,
+          id: subsId,
         },
         data: {
-          name: name,
+          name: req.body.name,
         },
       });
       res.status(200).json({
@@ -105,22 +101,22 @@ class CategoryController {
         data: null,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Updated Failed",
-        error: error.message,
       });
     }
   }
-
-  static async deleteCategory(req, res) {
+  static async deletedSubscription(req, res) {
     const { id } = req.params;
+
     try {
-      const isAlready = await prisma.category.findFirst({
+      const isAlready = await prisma.subscription.findFirst({
         where: {
           id: Number(id),
         },
       });
+
       if (!isAlready) {
         return res.status(404).json({
           success: false,
@@ -128,15 +124,18 @@ class CategoryController {
           data: null,
         });
       }
-      const categoryId = parseInt(req.params.id);
-      await prisma.category.delete({ where: { id: categoryId } });
+      const result = await prisma.subscription.delete({
+        where: {
+          id: parseInt(req.params.id),
+        },
+      });
       res.status(200).json({
         success: true,
         message: "Deleted Successfully",
         data: null,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Deleted Failed",
         error: error.message,
@@ -144,4 +143,4 @@ class CategoryController {
     }
   }
 }
-module.exports = CategoryController;
+module.exports = subscriptionController;

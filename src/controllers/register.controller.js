@@ -22,13 +22,13 @@ class regisController {
       });
       return response.status(201).json({
         success: true,
-        message: "Registrasi Berhasil",
+        message: "Register Successfully",
         data: null,
       });
     } catch (error) {
       response.status(500).json({
         success: false,
-        message: "Gagal melakukan Registrasi",
+        message: "Register Failed",
         error: error.message,
       });
     }

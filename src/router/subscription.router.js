@@ -1,8 +1,6 @@
 const { Router } = require("express");
-const CategoryController = require("../controllers/category.controller");
+const subscriptionController = require("../controllers/subscription.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
-const jwt = require("jsonwebtoken");
-
 const router = Router();
 
 const accessValidation = (req, res, next) => {
@@ -14,27 +12,34 @@ const accessValidation = (req, res, next) => {
     message: "Access Forbidden : Admin Only",
   });
 };
-router.get("/category", verifyToken, CategoryController.getAllCategories);
+
 router.get(
-  "/category/:id",
-  accessValidation,
-  CategoryController.getCategoryById
+  "/subscription",
+  verifyToken,
+  subscriptionController.getAllSubscription
+);
+router.get(
+  "/subscription/:id",
+  verifyToken,
+  subscriptionController.getAllSubscriptionById
 );
 router.post(
-  "/category",
+  "/subscription",
   verifyToken,
   accessValidation,
-  CategoryController.createCategory
+  subscriptionController.createSubsription
 );
 router.put(
-  "/category/:id",
+  "/subscription/:id",
+  verifyToken,
   accessValidation,
-  CategoryController.updateCategory
+  subscriptionController.updatedSubscription
 );
 router.delete(
-  "/category/:id",
+  "/subscription/:id",
+  verifyToken,
   accessValidation,
-  CategoryController.deleteCategory
+  subscriptionController.deletedSubscription
 );
 
 module.exports = router;

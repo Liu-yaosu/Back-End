@@ -19,7 +19,7 @@ class loginController {
       });
       const checkpassword = result[0].password;
       if (!result.length) {
-        throw createError(404, "User tidak ditemukan");
+        throw createError(404, "User Not Found");
       }
       const checkbcrypt = await bcrypt.compare(
         req.body.password,
@@ -27,7 +27,7 @@ class loginController {
       );
       console.log(checkbcrypt);
       if (!checkbcrypt) {
-        throw createError(400, "Password salah");
+        throw createError(400, "Wrong Password");
       }
       const payload = {
         id: result[0].id,
@@ -41,19 +41,18 @@ class loginController {
       if (result[0].role === "admin") {
         return response.status(200).json({
           success: true,
-          message: "Selamat Datang Admin",
+          message: "Welcome Admin",
           data: null,
           token,
         });
       } else {
         return response.status(200).json({
           success: true,
-          message: "Selamat Datang User",
+          message: "Welcome User",
           data: null,
           token,
         });
       }
-
       // const isPasswordValid = await bcrypt.compare(password, User.password);
       // if (isPasswordValid) {
       //   return response.json({
@@ -72,57 +71,6 @@ class loginController {
     } catch (error) {
       console.error(error, "error");
       response.status(500).json({ error: error.message });
-    }
-  }
-  static async logout(req, res) {
-    try {
-      const token = req.headers["authorization"]?.split(" ")[1];
-      if (!token) {
-        return res.status(400).json({
-          success: false,
-          message: "Token tidak disertakan",
-        });
-      }
-      // Tambahkan token ke dalam blacklist
-      blacklist.add(token);
-
-      return res.status(200).json({
-        success: true,
-        message: "Logout berhasil",
-      });
-    } catch (error) {
-      console.error("Logout error:", error.message);
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  // Middleware untuk memeriksa token di blacklist
-  static verifyTokenMiddleware(req, res, next) {
-    const token = req.headers["authorization"]?.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "No token provided",
-      });
-    }
-
-    if (blacklist.has(token)) {
-      return res.status(401).json({
-        success: false,
-        message: "Token has been logged out",
-      });
-    }
-
-    try {
-      const decoded = loginController.verifyToken(token);
-      req.userId = decoded.id;
-      next();
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
     }
   }
 }

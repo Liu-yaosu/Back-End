@@ -1,30 +1,36 @@
 const { Router } = require("express");
 const movieController = require("../controllers/movieController");
+const { verifyToken } = require("../middleware/auth.middleware");
 const router = Router();
 const jwt = require("jsonwebtoken");
 
 const accessValidation = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
-    return res.status(401).json({
-      message: "Token diperlukan",
-    });
+  if (req.user && req.user.role === "admin") {
+    return next();
   }
-  const token = authorization.split(" ")[1];
-  const secret = process.env.JWT_SECRET;
-  try {
-    const jwtDecode = jwt.verify(token, secret);
-    req.userData = jwtDecode;
-  } catch (error) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  }
-  next();
+  return res.status(403).json({
+    success: false,
+    message: "Access Forbidden : Admin Only",
+  });
 };
-router.get("/movie", accessValidation, movieController.getAllMovie);
-router.get("/movie/:id", accessValidation, movieController.getMovieById);
-router.post("/movie", accessValidation, movieController.createMovie);
-router.put("/movie/:id", movieController.updateMovie);
-router.delete("/movie/:id", movieController.deleteMovie);
+router.get("/movie", verifyToken, movieController.getAllMovie);
+router.get("/movie/:id", verifyToken, movieController.getMovieById);
+router.post(
+  "/movie",
+  verifyToken,
+  accessValidation,
+  movieController.createMovie
+);
+router.put(
+  "/movie/:id",
+  verifyToken,
+  accessValidation,
+  movieController.updateMovie
+);
+router.delete(
+  "/movie/:id",
+  verifyToken,
+  accessValidation,
+  movieController.deleteMovie
+);
 module.exports = router;
